@@ -1,4 +1,4 @@
-import urllib.request
+import urllib2
 import time
 from datetime import datetime,timedelta
 from dateutil import tz
@@ -42,7 +42,7 @@ to_zone = tz.gettz(myTimeZone)
 
 start = time.time()
 # actual http query
-result = urllib.request.urlopen(queryPage)
+result = urllib2.urlopen(queryPage)
 end = time.time()
 
 # round trip time of the query
@@ -56,7 +56,8 @@ print("Server DateTime :",server_datetime)
 
 # changing the timezone
 server_datetime = server_datetime.replace(tzinfo=from_zone)
-server_datetime = server_datetime.astimezone(to_zone)
+#server_datetime = server_datetime.astimezone(to_zone)
+server_datetime = server_datetime + timedelta(hours=5,minutes=30)
 
 # this time will be used for offsetting the time that was utilized for processing the recieved headers
 tillNow = time.time()
@@ -67,11 +68,11 @@ secondsToAdd = rtt/2 + (tillNow - end)
 # calculating the final datetime
 final_datetime = server_datetime + timedelta(seconds=secondsToAdd)
 print("Adjusted DateTime :",str(final_datetime))
-
+#print sys.platform
 # apply the date and time according to the current platform
-if sys.platform=='linux':
+if sys.platform=='linux2':
 	print("\nPlatform : Linux\n")
 	_linux_set_time(final_datetime)
-elif  sys.platform=='win32':
+elif sys.platform=='win32':
 	print("\nPlatform : Windows\n")
 	_win_set_time(final_datetime)
